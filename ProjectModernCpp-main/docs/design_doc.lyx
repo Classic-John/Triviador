@@ -1,0 +1,1578 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass scrartcl
+\begin_preamble
+\date{}
+\end_preamble
+\use_default_options true
+\begin_modules
+eqs-within-sections
+figs-within-sections
+theorems-ams-bytype
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Modern C++ Project: Triviador
+\end_layout
+
+\begin_layout Publishers
+Universitatea Transilvania din Brașov, 2022-2023
+\end_layout
+
+\begin_layout Author
+Balogh Szilárd, Opra-Bódi Botond, Trofin George Ionuț, Vitályos Norbert
+\end_layout
+
+\begin_layout Subtitle
+System Design Document
+\end_layout
+
+\begin_layout Standard
+This document aims to collect as many design decisions and implementation
+ details as possible during the development of this project.
+ This helps in (eventually) setting ideas in stone, making sure everyone
+ is on the same page concerning the architecture of the system and the features
+ that will and will not be implemented, and how exactly they will be implemented.
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+Everything here is a work-in-progress, sections will probably need to branch
+ off or be reorganized completely during the document's evolution.
+ Remove this comment once the project's done; at that point this will serve
+ as a very detailed documentation.
+ Use LyX notes as comments.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Overview
+\end_layout
+
+\begin_layout Standard
+Triviador is a desktop trivia game with a graphical user interface, which
+ can be played by 2-4 humans and/or computer agents over a local area network
+ or the internet.
+\end_layout
+
+\begin_layout Section
+Inspiration
+\end_layout
+
+\begin_layout Standard
+The inspiration for the game comes from a specific mobile game called Triviador.
+ The mobile game has many more capabilities and game modes than what's required
+ of us to implement.
+ We are going to implement only a small (and slightly modified) subset of
+ the game and a single game mode.
+ We are going to call our game Triviador as well in this document, please
+ don't sue.
+\end_layout
+
+\begin_layout Section
+Goals
+\end_layout
+
+\begin_layout Itemize
+Implement all the base requirements outlaid in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "official-project-doc"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The abstract game model described in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "part:Abstract-game-model"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Client–server model with the possibility to create at least 2 client instances
+ and 1 server instance which can communicate over the network
+\end_layout
+
+\begin_layout Itemize
+User management system and a login/register page.
+ Only registered and logged in users can play.
+ Usernames must be unique
+\end_layout
+
+\begin_layout Itemize
+User profile, which displays the user's game history
+\end_layout
+
+\begin_layout Itemize
+The size and shape of the map and the number of rounds should be modifiable
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Use a DBMS for storage of user data, questions, statistics
+\end_layout
+
+\begin_layout Itemize
+GUI for the client to display the login/register page and a visual presentation
+ of the game
+\end_layout
+
+\begin_layout Section
+Non-goals
+\end_layout
+
+\begin_layout Itemize
+Secure network communication and secure user data storage
+\end_layout
+
+\begin_layout Itemize
+Flashy and polished graphical interface
+\end_layout
+
+\begin_layout Itemize
+Other game modes
+\end_layout
+
+\begin_layout Section
+Technologies used
+\end_layout
+
+\begin_layout Itemize
+Microsoft Visual Studio
+\end_layout
+
+\begin_layout Itemize
+Qt
+\end_layout
+
+\begin_layout Itemize
+SQLite
+\end_layout
+
+\begin_layout Itemize
+SQLite ORM 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sqlite-orm-link"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+\begin_inset CommandInset label
+LatexCommand label
+name "part:Abstract-game-model"
+
+\end_inset
+
+Abstract game model
+\end_layout
+
+\begin_layout Standard
+This part contains an expanded and more detailed version of the game description
+ given in the 
+\begin_inset Quotes eld
+\end_inset
+
+Triviador
+\begin_inset Quotes erd
+\end_inset
+
+ section of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "official-project-doc"
+literal "false"
+
+\end_inset
+
+.
+ It contains the description of a game of Triviador on an abstract level,
+ modeling the different entities and their interactions that compose the
+ game.
+ This section therefore does not contain implementation details.
+\end_layout
+
+\begin_layout Section
+Short overview
+\end_layout
+
+\begin_layout Standard
+The game is played on a map which is divided into discrete territories.
+ The goal of the game is for each player to amass as many points as possible
+ (more than the other players) by fighting over territories.
+ Players capture territories by dueling with each other in a certain order.
+ A duel consists of one or more questions asked in a series that have to
+ be answered by both dueling players.
+ The player giving the correct answer, the answer closest to the correct
+ answer, or giving the answer fastest, wins the the duel, and captures a
+ contested territory.
+ The exact details will be described in the following paragraphs.
+\end_layout
+
+\begin_layout Standard
+There are two types of question: single-choice and numeric.
+ Both types are generally open-ended.
+ In case of a a 
+\emph on
+single-choice question
+\emph default
+, the game presents 4 possible answers, with only one being correct.
+ A 
+\emph on
+numeric question
+\emph default
+ has a non-negative integer as an answer, typically below 100
+\begin_inset space \thinspace{}
+\end_inset
+
+000, and the player can input an arbitrary number as their guess.
+\end_layout
+
+\begin_layout Section
+Definitions
+\end_layout
+
+\begin_layout Description
+map A connected undirected planar graph 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+?
+\end_layout
+
+\end_inset
+
+, in which the vertices are 
+\emph on
+territories
+\emph default
+ and the edges signify whether two territories are adjacent to each other
+ on the map.
+\end_layout
+
+\begin_layout Description
+territory A vertex in the 
+\emph on
+map
+\emph default
+.
+ A territory can be either unoccupied, or occupied by a 
+\emph on
+player
+\emph default
+, called the territory's 
+\emph on
+owner
+\emph default
+.
+ A territory has a score, which is initially 100 for an 
+\emph on
+ordinary territory
+\emph default
+ and 300 for a 
+\emph on
+base
+\emph default
+.
+ Territories can be 
+\emph on
+captured
+\emph default
+ by 
+\emph on
+players
+\emph default
+ other than the 
+\emph on
+owner
+\emph default
+ according to 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert territory capture rule reference
+\end_layout
+
+\end_inset
+
+, in which case the territory becomes occupied by that player and its score
+ is updated according to 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert territory score update rule reference
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+base Each 
+\emph on
+player
+\emph default
+ has exactly one 
+\emph on
+territory
+\emph default
+ named base throughout the 
+\emph on
+game
+\emph default
+.
+ The base has a score of 300 initially.
+ If a 
+\emph on
+player
+\emph default
+'s base is 
+\emph on
+captured
+\emph default
+, that 
+\emph on
+player
+\emph default
+ 
+\emph on
+loses
+\emph default
+ the game, their 
+\emph on
+score
+\emph default
+ becomes 0, and all the losing player's territories are transferred over
+ to the capturing player.
+ The detailed rules of territory capturing are described in 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert territory capture rule reference
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+player An agent who takes part in the decision making during a 
+\emph on
+game
+\emph default
+.
+ A player has a 
+\emph on
+score
+\emph default
+, which will determine their 
+\emph on
+ranking
+\emph default
+ at the end of the game according to 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert player ranking calculation rule reference
+\end_layout
+
+\end_inset
+
+.
+ A player can make the following decisions during a 
+\emph on
+game
+\emph default
+: answer 
+\emph on
+single-choice questions 
+\emph default
+and 
+\emph on
+numeric questions
+\emph default
+, activate 
+\emph on
+amplifiers
+\emph default
+, choose 
+\emph on
+territories
+\emph default
+ during the 
+\emph on
+expansion stage 
+\emph default
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert reference to expansion stage
+\end_layout
+
+\end_inset
+
+, choose 
+\emph on
+territories
+\emph default
+ to 
+\emph on
+attack
+\emph default
+ during the 
+\emph on
+dueling stage
+\emph default
+.
+\end_layout
+
+\begin_layout Description
+player
+\begin_inset space ~
+\end_inset
+
+score A non-negative integer assigned to a 
+\emph on
+player
+\emph default
+, which gets updated according to 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert player score update rule reference
+\end_layout
+
+\end_inset
+
+ and determines the 
+\emph on
+player
+\emph default
+'s 
+\emph on
+ranking
+\emph default
+ at the 
+\emph on
+determining the winners stage
+\emph default
+ according to 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert player ranking calculation rule reference
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+territory
+\begin_inset space ~
+\end_inset
+
+score A non-negative integer assigned to a 
+\emph on
+territory
+\emph default
+, which gets updated according to 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert territory score update rule reference
+\end_layout
+
+\end_inset
+
+ and takes part in the calculation of the 
+\emph on
+player score
+\emph default
+.
+\end_layout
+
+\begin_layout Description
+single-choice
+\begin_inset space ~
+\end_inset
+
+question A question for which there are 4 possible answers, of which one
+ is labeled correct.
+ Single-choice questions are only present during the 
+\emph on
+dueling stage
+\emph default
+, where they are the first question asked during a 
+\emph on
+duel
+\emph default
+.
+ Both 
+\emph on
+dueling players 
+\emph default
+are asked the same single-choice question, and they can select 0 or 1 of
+ the possible answers.
+ For the full rules concerning single-choice questions, see 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert single-choice question rule reference
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+numeric
+\begin_inset space ~
+\end_inset
+
+question A question for which there is one, non-negative integer answer.
+ The 
+\emph on
+player
+\emph default
+ can give an arbitrary non-negative integer as an their answer.
+ These are the only type of question during the 
+\emph on
+territory expansion stage
+\emph default
+, and the type of the second question in a 
+\emph on
+dueling question substage
+\emph default
+.
+ For the full rules concerning numeric questions, see 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+insert numeric question rule reference
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+answer
+\begin_inset space ~
+\end_inset
+
+correctness
+\begin_inset space ~
+\end_inset
+
+order The 
+\emph on
+players
+\emph default
+ answering a 
+\emph on
+numeric question
+\emph default
+ are ranked in an answer correctness order based on how close their answers
+ are to the correct answer and how quickly they answered.
+ Technically, the players are first sorted in ascending order by 
+\begin_inset Formula $|a_{c}-a_{p}|$
+\end_inset
+
+, where 
+\begin_inset Formula $a_{c}$
+\end_inset
+
+ is the correct answer and 
+\begin_inset Formula $a_{p}$
+\end_inset
+
+ is the 
+\emph on
+player
+\emph default
+'s answer; in case of equal such values, the affected 
+\emph on
+player
+\emph default
+s are further sorted by the order in which the 
+\emph on
+players
+\emph default
+' answer submissions were registered.
+ The 
+\emph on
+players
+\emph default
+ are given an index from 
+\begin_inset Formula $0$
+\end_inset
+
+ to 
+\begin_inset Formula $P-1$
+\end_inset
+
+ after the ordering, with 
+\begin_inset Formula $0$
+\end_inset
+
+ marking the 
+\emph on
+player
+\emph default
+ with the 
+\begin_inset Quotes eld
+\end_inset
+
+most correct
+\begin_inset Quotes erd
+\end_inset
+
+ answer.
+\end_layout
+
+\begin_layout Description
+attacker Denotes a 
+\emph on
+player
+\emph default
+ whose turn it is to choose one 
+\emph on
+territory
+\emph default
+ of an opponent during the 
+\emph on
+dueling stage
+\emph default
+, trying to occupy it.
+ The 
+\emph on
+owner
+\emph default
+ of the chosen 
+\emph on
+territory
+\emph default
+ is the 
+\emph on
+defender
+\emph default
+.
+ The attacker and the 
+\emph on
+defender
+\emph default
+ are entered into a 
+\emph on
+duel
+\emph default
+, whose winner determines the fate of the chosen 
+\emph on
+territory
+\emph default
+.
+\end_layout
+
+\begin_layout Description
+defender Denotes a 
+\emph on
+player
+\emph default
+ whose 
+\emph on
+territory
+\emph default
+ was chosen by an opponent during the 
+\emph on
+dueling stage
+\emph default
+.
+ This opponent is called the 
+\emph on
+attacker
+\emph default
+.
+ The attacker and the 
+\emph on
+defender
+\emph default
+ are entered into a 
+\emph on
+duel
+\emph default
+, whose winner determines the fate of the chosen 
+\emph on
+territory
+\emph default
+.
+\end_layout
+
+\begin_layout Description
+duel The duel is the second part of a 
+\emph on
+round
+\emph default
+ during the 
+\emph on
+dueling stage
+\emph default
+.
+ A duel is played between an 
+\emph on
+attacker
+\emph default
+ and a 
+\emph on
+defender
+\emph default
+.
+ First, both players are asked the same 
+\emph on
+single-choice question
+\emph default
+.
+ I
+\end_layout
+
+\begin_layout Section
+Stages
+\end_layout
+
+\begin_layout Standard
+The game consists of 4 stages: base selection, expansion, dueling, and ranking.
+ 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+add referencers to stages
+\end_layout
+
+\end_inset
+
+They play out one after another in this order.
+ Notations used in this section: 
+\begin_inset Formula $P$
+\end_inset
+
+ – number of players, 
+\begin_inset Formula $T$
+\end_inset
+
+ – number of territories, 
+\begin_inset Formula $r(p)$
+\end_inset
+
+ – ranking of player 
+\begin_inset Formula $p$
+\end_inset
+
+, 
+\begin_inset Formula $s(p)$
+\end_inset
+
+ – score of player 
+\begin_inset Formula $p$
+\end_inset
+
+, 
+\begin_inset Formula $\mathcal{P}$
+\end_inset
+
+ – set of all players.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+The individual stage sections need to be shorted and the unnecessary fluff
+ and detailed behavior explanations need to be moved elsewhere later on.
+\end_layout
+
+\begin_layout Plain Layout
+Also 
+\begin_inset Quotes eld
+\end_inset
+
+Territory expansion
+\begin_inset Quotes erd
+\end_inset
+
+ was renamed to just 
+\begin_inset Quotes eld
+\end_inset
+
+Expansion
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Determining the winners
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+Ranking
+\begin_inset Quotes erd
+\end_inset
+
+ but I'm too tired to replace every mention of them, so that needs to be
+ done as well
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\series bold
+Base selection
+\end_layout
+
+\begin_layout Standard
+Every player starts out with a score of 0 and no territories.
+ All players are asked a numeric question.
+ The answer correctness order defines the order in which players will select
+ a base for themselves.
+ Each player is asked in this order to select a territory as their base,
+ with the only restriction that a player can't choose a territory that is
+ directly adjacent to the previous players' choice of base.
+ A base's score is initially 300 and the same amount is added to every player's
+ score.
+\end_layout
+
+\begin_layout Subsection
+
+\series bold
+Expansion
+\end_layout
+
+\begin_layout Standard
+All players are asked a sequence of numeric questions, and after every question
+ the players choose some territories to occupy.
+ The order in which players are asked to choose territories is in increasing
+ answer correctness order.
+ The 
+\begin_inset Formula $n$
+\end_inset
+
+th player in the answer correctness order chooses 
+\begin_inset Formula $P-n-1$
+\end_inset
+
+ unoccupied territories to occupy; if the number of remaining unoccupied
+ territories is less than 
+\begin_inset Formula $P-n-1$
+\end_inset
+
+, only this number of territories will be chosen by the player affected.
+ This means that the maximum number of territories chosen after a question
+ is 
+\begin_inset Formula $\frac{1}{2}P(P-1)$
+\end_inset
+
+, and therefore the number of questions asked in total is 
+\begin_inset Formula $\left\lceil \frac{2(T-P)}{P(P-1)}\right\rceil $
+\end_inset
+
+.
+ A player has to choose all their territories before the next player can
+ choose.
+ A particular territory can be chosen if exactly one of the following conditions
+ is satisfied: 1.
+ it's unoccupied and adjacent to a territory occupied by the currently choosing
+ player, or 2.
+ there are no unoccupied territories adjacent to any territory occupied
+ by the current player.
+ The territories are chosen one by one, therefore these conditions are reevaluat
+ed after every choice.
+ Every territory occupied in this stage is assigned 100 points, and this
+ amount is added to a player's score after every territory occupied.
+\end_layout
+
+\begin_layout Subsection
+
+\series bold
+Dueling
+\end_layout
+
+\begin_layout Standard
+This stage consists of a variable number of rounds, 
+\begin_inset Formula $2P$
+\end_inset
+
+ by default.
+ Every round, a player (
+\emph on
+attacker
+\emph default
+) chooses a territory occupied by another player (
+\emph on
+defender
+\emph default
+)
+\emph on
+ 
+\emph default
+to try and take it for themselves.
+ The order of attackers is determined according to
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+add description of attacker order determination
+\end_layout
+
+\end_inset
+
+.
+ This 
+\emph on
+chosen territory
+\emph default
+ has to be adjacent to one of the attacking player's occupied territories,
+ with some exceptions.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+elaborate the exceptions here or later
+\end_layout
+
+\end_inset
+
+ The attacker and defender are entered into a duel.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+add duel description somewhere
+\end_layout
+
+\end_inset
+
+ If the winner of the duel is the attacker and the score of the chosen territory
+ is 100, the chosen territory gets occupied by the attacker.
+ If its score is more than 100, the chosen territory stays in the possession
+ of the defender and the territory's score is decremented by 100.
+ If the winner was the defender, the territory stays in the defender's possessio
+n and its score is incremented by 100.
+\end_layout
+
+\begin_layout Subsection
+
+\series bold
+Ranking
+\end_layout
+
+\begin_layout Standard
+The players are ranked in the descending order of their score.
+ All players 
+\begin_inset Formula $p$
+\end_inset
+
+ get a numeric rank according to the following formula: 
+\begin_inset Formula $r(p)=|\{p'\in\mathcal{P}\mid s(p')\geq s(p)\}|$
+\end_inset
+
+.
+ This means that tied players get an equal rank, but lowered rank.
+ The player(s) with the maximum score is declared the winner.
+ This stage marks the end of the game.
+\end_layout
+
+\begin_layout Part
+System
+\end_layout
+
+\begin_layout Standard
+This part is concerned with concrete implementation details.
+\end_layout
+
+\begin_layout Section
+Overview
+\end_layout
+
+\begin_layout Standard
+The project is structured as a Microsoft Visual Studio solution with 5 projects:
+ 
+\emph on
+client
+\emph default
+, 
+\emph on
+server
+\emph default
+, 
+\emph on
+model
+\emph default
+, 
+\emph on
+net_common
+\emph default
+, 
+\emph on
+common
+\emph default
+.
+ The SQLite database engine is used on the server-side for the data storage
+ needs.
+\end_layout
+
+\begin_layout Section
+Solution structure
+\end_layout
+
+\begin_layout Standard
+The solution is divided into 5 projects, each with a well-defined responsibility
+ and minimal cross-coupling to ease development and deployment.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Expand the individual project subsections with implementation/design/architectur
+e possibilities and decisions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Project: 
+\emph on
+model
+\end_layout
+
+\begin_layout Standard
+This project contains the implementation of the 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "part:Abstract-game-model"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ It is not responsible for spinning up game instances for players to play,
+ that is the responsibility of the 
+\emph on
+server
+\emph default
+ project.
+ It is also not responsible for presenting the interactive environment through
+ which the players can make their decisions, that is done by the 
+\emph on
+client
+\emph default
+ project (as a GUI implementation).
+\end_layout
+
+\begin_layout Standard
+The game model is implemented using a state machine and the game rules are
+ encoded in its transitions.
+ 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+or maybe not, idk yet
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Project: 
+\emph on
+server
+\end_layout
+
+\begin_layout Standard
+This project implements a server capable of hosting multiple game instances,
+ to which 
+\emph on
+client
+\emph default
+s can connect and play games over the network.
+ Every server instance manages its own database of users.
+ Clients need to register with the server and log in before they can create
+ and join games.
+\end_layout
+
+\begin_layout Subsubsection
+Database - sqlite ORM
+\end_layout
+
+\begin_layout Standard
+The base component of the whole database management is the 
+\series bold
+\emph on
+DatabaseManager
+\series default
+\emph default
+.
+ This is essentially an interface (
+\emph on
+virtual class
+\emph default
+), that serves the purpose of defining the basic structure of every other
+ specific database manager class.
+ Essentially it encapsulates the name of the database as the private field
+ 
+\series bold
+\emph on
+m_databasePath
+\series default
+\emph default
+, the only common feature of all the database manager classes.
+\end_layout
+
+\begin_layout Standard
+This interface is then implemented by all the database manager classes.
+ A concrete example is the 
+\series bold
+\emph on
+DatabaseQuestionManager
+\series default
+\emph default
+.
+ Though it has a long name, it is suggestive enough that anybody reading
+ through the code can understand its purpose.
+ In addition to the properties of 
+\series bold
+\emph on
+DatabaseManager
+\series default
+\emph default
+ it contains a variable of type 
+\series bold
+\emph on
+Storage 
+\series default
+\emph default
+which is actually responsible for dealing with the reading from and possibly
+ writing to the database.
+ With this field at our disposal we can abstract any unnecessary complexity
+ the 
+\emph on
+sqlite ORM
+\emph default
+ library might contain (more in the following paragraph).
+ 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+\emph on
+Storage
+\series default
+\emph default
+ field is a key building block of the database.
+ It is what actually communicates with the database and does the dirty work.
+ To make it possible to have a Storage field, I needed its type.
+ This, however, turned out to be a complicated issue, mostly because this
+ type depends on other template parameters we can't deduce manually.
+ That's why I used 
+\series bold
+decltype
+\series default
+, which essentially does the same thing, except correctly and seamlessly.
+ We have a functor 
+\series bold
+\emph on
+QuestionStorageInitializer
+\series default
+\emph default
+ that returns a storage created as 
+\series bold
+\emph on
+auto
+\series default
+\emph default
+.
+ This is then interpreted by decltype and we have our Storage type.
+ 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+\emph on
+QuestionManager
+\series default
+\emph default
+ is another layer of abstraction on the database manager classes.
+ It is what communicates with the other parts of the program, or with the
+ server.
+ The hard work is mostly done, this makes it easier for anyone outside the
+ database manager classes to get questions with a simple 
+\series bold
+\emph on
+getQuestion<QType>()
+\series default
+\emph default
+ method.
+ This method is templatized, so it is really easy to get the specific question
+ needed.
+\end_layout
+
+\begin_layout Subsection
+Project: 
+\emph on
+client
+\end_layout
+
+\begin_layout Standard
+This project implements a GUI application through which the users can log
+ onto a server, create games hosted on the server, connect to games, and
+ play them.
+\end_layout
+
+\begin_layout Subsection
+Project: 
+\emph on
+net_common
+\end_layout
+
+\begin_layout Standard
+This project contains network communications code common to both the 
+\emph on
+server
+\emph default
+ and 
+\emph on
+client
+\emph default
+ projects.
+\end_layout
+
+\begin_layout Subsection
+Project: 
+\emph on
+common
+\end_layout
+
+\begin_layout Standard
+This project contains common functionality used by the other projects which
+ doesn't conceptually/strictly belong to any of them.
+\end_layout
+
+\begin_layout Part
+Recycle bin
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+PUT SENTENCES, PARAGRAPHS, IDEAS HERE IF THEY HAVE NO PLACE YET, SO YOU
+ DON'T FORGET TO ADD THEM TO THEIR PROPER PLACE LATER.
+ YOU CAN USE IT AS A SANDBOX AND WRITE ANYTHING HERE IF IT'S NOT COMPLETELY
+ FLESHED OUT YET OR YOU DON'T KNOW WHERE TO PUT IT.
+ JUST KEEP WRITING, DON'T GET BLOCKED FOR THESE REASONS.
+ YOU CAN ADD SUBSECTIONS FOR SEPARATION.
+\end_layout
+
+\begin_layout Standard
+The player is allowed to choose a single option, without the possibility
+ of changing their decision once it's made.
+\end_layout
+
+\begin_layout Standard
+A player's score is calculated as being the sum of the scores of the territories
+ occupied by the player.
+\end_layout
+
+\begin_layout Standard
+Question Handling System: 
+\emph on
+Questions
+\emph default
+ represent a crucial component of 
+\series bold
+Triviador
+\series default
+.
+ In our version of Triviador, there are 
+\series bold
+\emph on
+two types
+\series default
+\emph default
+ of Questions: 
+\end_layout
+
+\begin_layout Itemize
+Single-choice Question 
+\end_layout
+
+\begin_layout Itemize
+Numerical Question
+\end_layout
+
+\begin_layout Standard
+Questions are part of the 
+\series bold
+Game
+\series default
+ class, they are stored in and read into memory from a 
+\series bold
+Database
+\series default
+ (see []).
+ The underlying data type of the questions is a 
+\emph on
+vector
+\emph default
+.
+ All types of Questions contain a 
+\emph on
+statement
+\emph default
+, which is stored in 
+\emph on
+string
+\emph default
+.
+ While every Question has a 
+\emph on
+correct answer
+\emph default
+, depending on the type of the Question, this can be a 
+\emph on
+simple numerical value
+\emph default
+, an unsigned integer (Numerical Question), or a 
+\emph on
+string value
+\emph default
+, an index to the correct answer in the possible choices (Single-choice
+ Question).
+\end_layout
+
+\begin_layout Standard
+The only problem is, that we need unique questions.
+ It can be done in multiple ways, the easiest being to just have an unordered
+ set of questionID's, and a random number generator from 0 to the number
+ of questions there are, number being the ID, representing the question.
+ If the ID was already read, we will generate another number until we have
+ a unique question.
+ The issue with this is that this can, in theory, take inifite amount of
+ time (let's say we generate already chosen ID's for a long time), and we
+ don't want this to happen while the game is running, and question is solicited.
+ Obviously, this isn't the best solution, but we will use it for testing
+ purposes Another solution would be to store as many questions as we need
+ before a game starts (it will be part of the loading process) in some kind
+ of container (we need fast insertion and deletion, so list is a good choice)
+ with an adaptor.
+ The issue with this second approach is that our QuestionManager class has
+ to know about the number of players, the size of the map to know how many
+ questions to load into the specific container.
+ We really don't want that, because the sole purpose of the QuestionManager
+ (or any other class mentioned above) is to make the connection between
+ the database and the game and to make it easy to solicit questions.
+ So we have chosen the first solution.
+ First problem: We have two types of questions, that are stored in two different
+ tables, so there is no way to differentiate between the question with ID
+ 1 in the first table from the one with the same ID in the second table.
+ We can use two unordered sets, but that seems too inefficient.
+ So we settled at a template function with a simple while loop, that runs
+ until a unique ID is found.
+ I'm yet to implement the unordered set for the numerical questions, and
+ the issue mentioned above is, of course, there, though this will be minimized
+ with the addition of more questions to the database.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "official-project-doc"
+literal "false"
+
+\end_inset
+
+
+\emph on
+Official project guidelines
+\emph default
+.
+ 
+\begin_inset CommandInset href
+LatexCommand href
+target "https://docs.google.com/document/d/1qI5q5SosuVvnK4QGh8-X_CfR0o-boQCTMbijoQqY72k"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "sqlite-orm-link"
+literal "false"
+
+\end_inset
+
+
+\emph on
+SQLite ORM.
+ 
+\emph default
+
+\begin_inset CommandInset href
+LatexCommand href
+target "https://github.com/fnc12/sqlite_orm"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

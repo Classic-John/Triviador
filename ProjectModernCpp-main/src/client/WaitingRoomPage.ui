@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WaitingRoomPageClass</class>
+ <widget class="QWidget" name="WaitingRoomPageClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>493</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WaitingRoomPage</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="styleSheet">
+      <string notr="true">#frame{
+border-radius:10px ;
+background-color: rgba(0,0,0,0.4);
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="codRoomLabel">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;The code of the room is&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;The players connected to the room are:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListWidget" name="playersList"/>
+   </item>
+   <item>
+    <widget class="QPushButton" name="startGame">
+     <property name="styleSheet">
+      <string notr="true">.QPushButton {
+  border-radius: 4px;
+  background-color: #0e6fa2;
+  border: none;
+  color: #000;
+  text-align: center;
+  font-size: 22px;
+  padding: 10px;
+  margin: 5px;
+}
+.QPushButton:hover{
+  border-radius: 5px;
+  background-color: #38afd1;
+  margin: 3px;
+  color:#FFF;
+}</string>
+     </property>
+     <property name="text">
+      <string>Start game</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="goBack">
+     <property name="styleSheet">
+      <string notr="true">.QPushButton {
+  border-radius: 4px;
+  background-color: #0e6fa2;
+  border: none;
+  color: #000;
+  text-align: center;
+  font-size: 22px;
+  padding: 10px;
+  margin: 5px;
+}
+.QPushButton:hover{
+  border-radius: 5px;
+  background-color: #38afd1;
+  margin: 3px;
+  color:#FFF;
+}</string>
+     </property>
+     <property name="text">
+      <string>Go back</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
